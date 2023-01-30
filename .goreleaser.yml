@@ -1,0 +1,54 @@
+---
+project_name: batch-graphql
+
+release:
+  github:
+    owner: tilotech
+    name: batch-graphql
+
+builds:
+  - binary: batch-graphql
+    goos:
+      - darwin
+      - windows
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    main: ./
+    flags:
+      - -trimpath
+    ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
+
+archives:
+  - format: tar.gz
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ end }}"
+    files:
+      - LICENSE
+      - README.md
+
+snapshot:
+  name_template: SNAPSHOT-{{ .Commit }}
+
+checksum:
+  name_template: "{{ .ProjectName }}-{{ .Version }}-checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "(?i)^docs?:"
+      - '(?i)^docs\([^:]+\):'
+      - '(?i)^docs\[[^:]+\]:'
+      - "^tests?:"
+      - "(?i)^dev:"
+      - '^build\(deps\): bump .* in /docs \(#\d+\)'
+      - '^build\(deps\): bump .* in /\.github/peril \(#\d+\)'
+      - Merge pull request
+      - Merge branch
