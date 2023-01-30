@@ -27,12 +27,18 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 }
 
+// Version will hold the actual build version from main for precompiled binaries.
+var Version = ""
+
 func printVersion() error {
 	buildInfo, ok := debug.ReadBuildInfo()
 	if !ok {
 		return fmt.Errorf("could not read BuildInfo")
 	}
-	version := buildInfo.Main.Version
+	version := Version
+	if version == "" {
+		version = buildInfo.Main.Version
+	}
 	if version == "" {
 		version = "development"
 	}
